@@ -1,519 +1,391 @@
-
-
 <html>
-    <head>
-        <title></title>
-        <meta property="og:title" content="Associative3D: Volumetric Reconstruction from Sparse Views"/>
-        <meta property="og:image" content="teaser.png"/>
-		<meta property="og:description" content="S. Qian, L. Jin, D. F. Fouhey. ECCV 2020." />
+  <head>
+    <title></title>
+    <meta property="og:title" content="Associative3D: Volumetric Reconstruction from Sparse Views"/>
+    <meta property="og:image" content="teaser.png"/>
+    <meta property="og:description" content="S. Qian, L. Jin, D. F. Fouhey. ECCV 2020." />
     
-        <link rel="stylesheet" href="demo-styles.css">
+    <!-- webpage template-->
+    <link rel="stylesheet" href="website.css">
     
-        <!-- The following libraries and polyfills are recommended to maximize browser support -->
-        <!-- NOTE: you must adjust the paths as appropriate for your project -->
-        
-        <!-- 🚨 REQUIRED: Web Components polyfill to support Edge and Firefox < 63 -->
-        <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.1.3/webcomponents-loader.js"></script>
+    <!-- model-viewer css -->
+    <link rel="stylesheet" href="demo-styles.css">
+
+    <!-- The following libraries and polyfills are recommended to maximize browser support -->
+    <!-- NOTE: you must adjust the paths as appropriate for your project -->
+    <!-- 🚨 REQUIRED: Web Components polyfill to support Edge and Firefox < 63 -->
+    <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.1.3/webcomponents-loader.js"></script>
+    <!-- 💁 OPTIONAL: Intersection Observer polyfill for better performance in Safari and IE11 -->
+    <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
+    <!-- 💁 OPTIONAL: Resize Observer polyfill improves resize behavior in non-Chrome browsers -->
+    <script src="https://unpkg.com/resize-observer-polyfill@1.5.0/dist/ResizeObserver.js"></script>
+    <!-- 💁 OPTIONAL: Fullscreen polyfill is needed to fully support AR features -->
+    <script src="https://unpkg.com/fullscreen-polyfill@1.0.2/dist/fullscreen.polyfill.js"></script>
+    <!-- 💁 OPTIONAL: Include prismatic.js for Magic Leap support -->
+    <script src="https://unpkg.com/@magicleap/prismatic/prismatic.min.js"></script>
+    <!-- 💁 OPTIONAL: The :focus-visible polyfill removes the focus ring for some input types -->
+    <script src="https://unpkg.com/focus-visible@5.0.2/dist/focus-visible.js" defer></script>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript">google.load("jquery", "1.3.2");</script>
     
-        <!-- 💁 OPTIONAL: Intersection Observer polyfill for better performance in Safari and IE11 -->
-        <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
-    
-        <!-- 💁 OPTIONAL: Resize Observer polyfill improves resize behavior in non-Chrome browsers -->
-        <script src="https://unpkg.com/resize-observer-polyfill@1.5.0/dist/ResizeObserver.js"></script>
-    
-        <!-- 💁 OPTIONAL: Fullscreen polyfill is needed to fully support AR features -->
-        <script src="https://unpkg.com/fullscreen-polyfill@1.0.2/dist/fullscreen.polyfill.js"></script>
-    
-        <!-- 💁 OPTIONAL: Include prismatic.js for Magic Leap support -->
-        <script src="https://unpkg.com/@magicleap/prismatic/prismatic.min.js"></script>
-        
-        <!-- 💁 OPTIONAL: The :focus-visible polyfill removes the focus ring for some input types -->
-        <script src="https://unpkg.com/focus-visible@5.0.2/dist/focus-visible.js" defer></script>
-  
-
-
-         
-<script src="http://www.google.com/jsapi" type="text/javascript"></script>
-<script type="text/javascript">google.load("jquery", "1.3.2");</script>
-
-<style type="text/css">
-    body {
-        font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-        font-weight:300;
-        font-size:18px;
-        margin-left: auto;
-        margin-right: auto;
-        width: 1100px;
-    }
-
-    h1 {
-        font-weight:300;
-    }
-
-    .disclaimerbox {
-        background-color: #eee;
-        border: 1px solid #eeeeee;
-        border-radius: 10px ;
-        -moz-border-radius: 10px ;
-        -webkit-border-radius: 10px ;
-        padding: 20px;
-    }
-
-    video.header-vid {
-        height: 140px;
-        border: 1px solid black;
-        border-radius: 10px ;
-        -moz-border-radius: 10px ;
-        -webkit-border-radius: 10px ;
-    }
-
-    img.header-img {
-        height: 140px;
-        border: 1px solid black;
-        border-radius: 10px ;
-        -moz-border-radius: 10px ;
-        -webkit-border-radius: 10px ;
-    }
-
-    img.rounded {
-        border: 1px solid #eeeeee;
-        border-radius: 10px ;
-        -moz-border-radius: 10px ;
-        -webkit-border-radius: 10px ;
-    }
-
-    a:link,a:visited
-    {
-        color: #1367a7;
-        text-decoration: none;
-    }
-    a:hover {
-        color: #208799;
-    }
-
-    td.dl-link {
-        height: 160px;
-        text-align: center;
-        font-size: 22px;
-    }
-
-    .layered-paper-big { /* modified from: http://css-tricks.com/snippets/css/layered-paper/ */
-        box-shadow:
-                0px 0px 1px 1px rgba(0,0,0,0.35), /* The top layer shadow */
-                5px 5px 0 0px #fff, /* The second layer */
-                5px 5px 1px 1px rgba(0,0,0,0.35), /* The second layer shadow */
-                10px 10px 0 0px #fff, /* The third layer */
-                10px 10px 1px 1px rgba(0,0,0,0.35), /* The third layer shadow */
-                15px 15px 0 0px #fff, /* The fourth layer */
-                15px 15px 1px 1px rgba(0,0,0,0.35), /* The fourth layer shadow */
-                20px 20px 0 0px #fff, /* The fifth layer */
-                20px 20px 1px 1px rgba(0,0,0,0.35), /* The fifth layer shadow */
-                25px 25px 0 0px #fff, /* The fifth layer */
-                25px 25px 1px 1px rgba(0,0,0,0.35); /* The fifth layer shadow */
-        margin-left: 10px;
-        margin-right: 45px;
-    }
-
-
-    .layered-paper { /* modified from: http://css-tricks.com/snippets/css/layered-paper/ */
-        box-shadow:
-                0px 0px 1px 1px rgba(0,0,0,0.35), /* The top layer shadow */
-                5px 5px 0 0px #fff, /* The second layer */
-                5px 5px 1px 1px rgba(0,0,0,0.35), /* The second layer shadow */
-                10px 10px 0 0px #fff, /* The third layer */
-                10px 10px 1px 1px rgba(0,0,0,0.35); /* The third layer shadow */
-        margin-top: 5px;
-        margin-left: 10px;
-        margin-right: 30px;
-        margin-bottom: 5px;
-    }
-
-    .vert-cent {
-        position: relative;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    hr
-    {
-        border: 0;
-        height: 1.5px;
-        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
-    }
-</style>
-    </head>
-
+  </head>
   <body>
     <br>
     <center>
-    <span style="font-size:38px">Associative3D: Volumetric Reconstruction from Sparse Views</span>
+      <span style="font-size:38px">Associative3D: Volumetric Reconstruction from Sparse Views</span>
     </center>
-
     <br><br>
-      <table align=center width=700px>
-       <tr>
+    <table align=center width=700px>
+      <tr>
         <td align=center width=100px>
-        <center>
-        <span style="font-size:20px"><a href="https://jasonqsy.github.io/">Shengyi Qian</a>*</span>
-        </center>
+          <center>
+            <span style="font-size:20px"><a href="https://jasonqsy.github.io/">Shengyi Qian</a>*</span>
+          </center>
         </td>
         <td align=center width=100px>
-        <center>
-        <span style="font-size:20px"><a href="https://jinlinyi.github.io/">Linyi Jin</a>*</span>
-        </center>
+          <center>
+            <span style="font-size:20px"><a href="https://jinlinyi.github.io/">Linyi Jin</a>*</span>
+          </center>
         </td>
         <td align=center width=100px>
-        <center>
-        <span style="font-size:20px"><a href="https://web.eecs.umich.edu/~fouhey/">David F. Fouhey</a></span>
-        </center>
+          <center>
+            <span style="font-size:20px"><a href="https://web.eecs.umich.edu/~fouhey/">David F. Fouhey</a></span>
+          </center>
         </td>
-        
-     </tr>
+      </tr>
     </table>
-
     <br>
     <table align=center width=700px>
-       <tr>
+      <tr>
         <td align=center width=200px>
-        <center>
-          <span style="font-size:20px">University of Michigan</span>
-        </center>
+          <center>
+            <span style="font-size:20px">University of Michigan</span>
+          </center>
         </td>
-     </tr>
+      </tr>
     </table>
-    
     <br>
     <table align=center width=700px>
-       <tr>
+      <tr>
         <td align=center width=100px>
-        <center>
-          <span style="font-size:20px">ECCV 2020</span>
-        </center>
+          <center>
+            <span style="font-size:20px">ECCV 2020</span>
+          </center>
         </td>
-     </tr>
+      </tr>
     </table>
-
     <br>
-      <table align=center width=300px>
-       <tr>
+    <table align=center width=300px>
+      <tr>
         <td align=center width=100px>
-        <center>
-        <span style="font-size:20px"><a href="#">[pdf]</a></span>
-        </center>
+          <center>
+            <span style="font-size:20px"><a href="#">[pdf]</a></span>
+          </center>
         </td>
         <td align=center width=100px>
-        <center>
-        <span style="font-size:20px"><a href="#">[code]</a></span>
-        </center>
+          <center>
+            <span style="font-size:20px"><a href="#">[code]</a></span>
+          </center>
         </td>
         <td align=center width=100px>
-        <center>
-        <span style="font-size:20px"><a href="#">[video]</a></span>
-        </center>
+          <center>
+            <span style="font-size:20px"><a href="#">[video]</a></span>
+          </center>
         </td>
-        
-     </tr>
+      </tr>
     </table>
     <table align=center width=700px>
-     <tr>
-    <td align=center width=100px>
-    <center>
-    <span style="font-size:20px"></span>
-    </center>
-    </td>
-   </tr>
-  </table>
-
-            <br>
-            <table align=center width=900px>
-                <tr>
-                    <td width=00px>
-                      <center>
-                          <img src = "teaser.png" width="900px"></img><br>
-                    </center>
-                    </td>
-                </tr>
-                    <td width=600px>
-                      <center>
-                          <span style="font-size:14px"><i>Given two views from unknown cameras, we aim 
-                            to extract a coherent full 3D space in terms of 
-                            a set of volumetric objects placed in the scene. 
-                            We represent the scene with a factored representation that splits the scene
-                            into per-object voxel grids with a scale and pose.</i>
-                    </center>
-                    </td>
-                </tr>
-            </table>
-
-            <br>
-            This paper studies the problem of 3D volumetric reconstruction
-  from two views of a scene with an unknown camera. While seemingly
-  easy for humans, this problem poses many challenges for computers
-  since it requires simultaneously reconstructing objects in the two
-  views while also figuring out their relationship. We propose a new approach
-  that estimates reconstructions, distributions over the
-  camera/object and camera/camera transformations, as well as an
-  inter-view object affinity matrix. This information is then jointly reasoned
-  over to produce the most likely explanation of the scene. We train and
-  test our approach on SUNCG, a dataset of indoor scenes, and rigorously
-  evaluate the merits of our joint reasoning approach. 
-  Our experiments show that it is able to recover reasonable scenes from sparse views, while the problem is still challenging.
-            <br><br>
-          <hr>
-         <!-- <table align=center width=550px> -->
-        <br><br>
-	<table align=center width=1000px>
-	       <center><h1>Results</h1></center>
-	      <tr>
-		<center>
-        
-            <div class='container'>
-
-                <div class ='row' >
-                <div class ='column'>
-                <div class='header header-input'>View A</div></div>
-                <div class ='column'>
-                <div class='header header-input'>View B</div></div>
-                <div class ='column'>
-                <div class='header header-result'> Associative3D</div></div>
-                <div class ='column'>
-                <div class='header header-result'> Ground Truth</div></div>
-                </div>
-                <div class ='row' >
-                <div class ='column'>
-                <a href='0a41fac2fa30b5eeb934d1ae94340087_000009_000029/1.png'><img class='input-img view1' src='0a41fac2fa30b5eeb934d1ae94340087_000009_000029/1.png'></img></a></div>
-                <div class ='column'>
-                <a href='0a41fac2fa30b5eeb934d1ae94340087_000009_000029/2.png'><img class='input-img view2' src='0a41fac2fa30b5eeb934d1ae94340087_000009_000029/2.png'></img></a></div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="0a41fac2fa30b5eeb934d1ae94340087_000009_000029/Prediction.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                  preload
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="0a41fac2fa30b5eeb934d1ae94340087_000009_000029/GT.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                </div>
-                <div class ='row' >
-                <div class ='column'>
-                <a href='0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/1.png'><img class='input-img view1' src='0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/1.png'></img></a></div>
-                <div class ='column'>
-                <a href='0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/2.png'><img class='input-img view2' src='0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/2.png'></img></a></div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/Prediction.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/GT.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                </div>
-                <div class ='row' >
-                <div class ='column'>
-                <a href='0e506f624a05a5b44c9f5e3899385d6e_000004_000002/1.png'><img class='input-img view1' src='0e506f624a05a5b44c9f5e3899385d6e_000004_000002/1.png'></img></a></div>
-                <div class ='column'>
-                <a href='0e506f624a05a5b44c9f5e3899385d6e_000004_000002/2.png'><img class='input-img view2' src='0e506f624a05a5b44c9f5e3899385d6e_000004_000002/2.png'></img></a></div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="0e506f624a05a5b44c9f5e3899385d6e_000004_000002/Prediction.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="0e506f624a05a5b44c9f5e3899385d6e_000004_000002/GT.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                </div>
-                <div class ='row'>
-                <div class ='column'>
-                <a href='1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/1.png'><img class='input-img view1' src='1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/1.png'></img></a></div>
-                <div class ='column'>
-                <a href='1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/2.png'><img class='input-img view2' src='1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/2.png'></img></a></div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/Prediction.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/GT.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                </div>
-                <div class ='row' >
-                <div class ='column'>
-                <a href='2ac722fd6ae4fdaab442679391414073_000011_000004/1.png'><img class='input-img view1' src='2ac722fd6ae4fdaab442679391414073_000011_000004/1.png'></img></a></div>
-                <div class ='column'>
-                <a href='2ac722fd6ae4fdaab442679391414073_000011_000004/2.png'><img class='input-img view2' src='2ac722fd6ae4fdaab442679391414073_000011_000004/2.png'></img></a></div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="2ac722fd6ae4fdaab442679391414073_000011_000004/Prediction.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="2ac722fd6ae4fdaab442679391414073_000011_000004/GT.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                </div>
-                <div class ='row' >
-                <div class ='column'>
-                <a href='2c4e0cb1530727da521a458ccc4485b6_000007_000008/1.png'><img class='input-img view1' src='2c4e0cb1530727da521a458ccc4485b6_000007_000008/1.png'></img></a></div>
-                <div class ='column'>
-                <a href='2c4e0cb1530727da521a458ccc4485b6_000007_000008/2.png'><img class='input-img view2' src='2c4e0cb1530727da521a458ccc4485b6_000007_000008/2.png'></img></a></div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="2c4e0cb1530727da521a458ccc4485b6_000007_000008/Prediction.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                <div class ='column'>
-                
-                        <div id="card">
-                    <!-- All you need to put beautiful, interactive 3D content on your site: -->
-                    <model-viewer src="2c4e0cb1530727da521a458ccc4485b6_000007_000008/GT.glb"
-                                  shadow-intensity="1"
-                                  camera-controls
-                                  exposure="0.4"
-                                  auto-rotate
-                                  background-color: rgb(197, 4, 4);
-                                >
-                    </model-viewer> 
-                  </div>
-                </div>
-                </div>
-                
-                </div>
-
-		</center>
-	      </tr>
-          <br>
-                <hr>
-	</table>
-	<table align=center width=1100px>
-                <tr>
-                    <td>
-                      <left>
-                <center><h1>Acknowledgements</h1></center>
-                This webpage template was borrowed from some <a href="https://richzhang.github.io/colorization/">colorful folks</a>.
-            </left>
+      <tr>
+        <td align=center width=100px>
+          <center>
+            <span style="font-size:20px"></span>
+          </center>
         </td>
-        </tr>
-        </table>
-        
-        
-
+      </tr>
+    </table>
+    <br>
+    <table align=center width=900px>
+      <tr>
+        <td width=00px>
+          <center>
+            <img src = "teaser.png" width="900px"></img><br>
+          </center>
+        </td>
+      </tr>
+      <td width=600px>
+        <center>
+          <span style="font-size:14px"><i>Given two views from unknown cameras, we aim 
+          to extract a coherent full 3D space in terms of 
+          a set of volumetric objects placed in the scene. 
+          We represent the scene with a factored representation that splits the scene
+          into per-object voxel grids with a scale and pose.</i>
+        </center>
+      </td>
+      </tr>
+    </table>
+    <br>
+    This paper studies the problem of 3D volumetric reconstruction
+    from two views of a scene with an unknown camera. While seemingly
+    easy for humans, this problem poses many challenges for computers
+    since it requires simultaneously reconstructing objects in the two
+    views while also figuring out their relationship. We propose a new approach
+    that estimates reconstructions, distributions over the
+    camera/object and camera/camera transformations, as well as an
+    inter-view object affinity matrix. This information is then jointly reasoned
+    over to produce the most likely explanation of the scene. We train and
+    test our approach on SUNCG, a dataset of indoor scenes, and rigorously
+    evaluate the merits of our joint reasoning approach. 
+    Our experiments show that it is able to recover reasonable scenes from sparse views, while the problem is still challenging.
+    <br><br>
+    <hr>
+    <!-- <table align=center width=550px> -->
+    <br><br>
+    <table align=center width=1000px>
+      <center>
+        <h1>Interactive Results</h1>
+      </center>
+      <tr>
+        <center>
+          <div class='container'>
+            <div class ='row' >
+              <div class ='column'>
+                <div class='header header-input'>View A</div>
+              </div>
+              <div class ='column'>
+                <div class='header header-input'>View B</div>
+              </div>
+              <div class ='column'>
+                <div class='header header-result'>Associative3D</div>
+              </div>
+              <div class ='column'>
+                <div class='header header-result'>Ground Truth</div>
+              </div>
+            </div>
+            <div class ='row' >
+              <div class ='column'>
+                <a href='0a41fac2fa30b5eeb934d1ae94340087_000009_000029/1.png'><img class='input-img view1' src='0a41fac2fa30b5eeb934d1ae94340087_000009_000029/1.png'></img></a>
+              </div>
+              <div class ='column'>
+                <a href='0a41fac2fa30b5eeb934d1ae94340087_000009_000029/2.png'><img class='input-img view2' src='0a41fac2fa30b5eeb934d1ae94340087_000009_000029/2.png'></img></a>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="0a41fac2fa30b5eeb934d1ae94340087_000009_000029/Prediction.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="0a41fac2fa30b5eeb934d1ae94340087_000009_000029/GT.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+            </div>
+            <div class ='row' >
+              <div class ='column'>
+                <a href='0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/1.png'><img class='input-img view1' src='0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/1.png'></img></a>
+              </div>
+              <div class ='column'>
+                <a href='0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/2.png'><img class='input-img view2' src='0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/2.png'></img></a>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/Prediction.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  interaction-prompt="when-focused"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="0d05b1c41404736ad97e7f7a4f4e7a0a_000007_000004/GT.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  interaction-prompt="when-focused"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+            </div>
+            <div class ='row' >
+              <div class ='column'>
+                <a href='0e506f624a05a5b44c9f5e3899385d6e_000004_000002/1.png'><img class='input-img view1' src='0e506f624a05a5b44c9f5e3899385d6e_000004_000002/1.png'></img></a>
+              </div>
+              <div class ='column'>
+                <a href='0e506f624a05a5b44c9f5e3899385d6e_000004_000002/2.png'><img class='input-img view2' src='0e506f624a05a5b44c9f5e3899385d6e_000004_000002/2.png'></img></a>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="0e506f624a05a5b44c9f5e3899385d6e_000004_000002/Prediction.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  interaction-prompt="when-focused"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="0e506f624a05a5b44c9f5e3899385d6e_000004_000002/GT.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  interaction-prompt="when-focused"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+            </div>
+            <div class ='row'>
+              <div class ='column'>
+                <a href='1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/1.png'><img class='input-img view1' src='1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/1.png'></img></a>
+              </div>
+              <div class ='column'>
+                <a href='1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/2.png'><img class='input-img view2' src='1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/2.png'></img></a>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/Prediction.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  interaction-prompt="when-focused"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="1f76f38cdc1b0a58282016b4af7bc40b_000020_000007/GT.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  interaction-prompt="when-focused"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+            </div>
+            <div class ='row' >
+              <div class ='column'>
+                <a href='2ac722fd6ae4fdaab442679391414073_000011_000004/1.png'><img class='input-img view1' src='2ac722fd6ae4fdaab442679391414073_000011_000004/1.png'></img></a>
+              </div>
+              <div class ='column'>
+                <a href='2ac722fd6ae4fdaab442679391414073_000011_000004/2.png'><img class='input-img view2' src='2ac722fd6ae4fdaab442679391414073_000011_000004/2.png'></img></a>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="2ac722fd6ae4fdaab442679391414073_000011_000004/Prediction.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  interaction-prompt="when-focused"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="2ac722fd6ae4fdaab442679391414073_000011_000004/GT.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  interaction-prompt="when-focused"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+            </div>
+            <div class ='row' >
+              <div class ='column'>
+                <a href='2c4e0cb1530727da521a458ccc4485b6_000007_000008/1.png'><img class='input-img view1' src='2c4e0cb1530727da521a458ccc4485b6_000007_000008/1.png'></img></a>
+              </div>
+              <div class ='column'>
+                <a href='2c4e0cb1530727da521a458ccc4485b6_000007_000008/2.png'><img class='input-img view2' src='2c4e0cb1530727da521a458ccc4485b6_000007_000008/2.png'></img></a>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="2c4e0cb1530727da521a458ccc4485b6_000007_000008/Prediction.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  interaction-prompt="when-focused"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+              <div class ='column'>
+                <div id="card">
+                  <!-- All you need to put beautiful, interactive 3D content on your site: -->
+                  <model-viewer src="2c4e0cb1530727da521a458ccc4485b6_000007_000008/GT.glb"
+                  shadow-intensity="1"
+                  camera-controls
+                  exposure="0.4"
+                  interaction-prompt="when-focused"
+                  background-color: rgb(197, 4, 4);
+                  >
+                  </model-viewer> 
+                </div>
+              </div>
+            </div>
+          </div>
+        </center>
+      </tr>
+      <br>
+      <hr>
+    </table>
+    <table align=center width=1100px>
+      <tr>
+        <td>
+          <left>
+            <center>
+              <h1>Acknowledgements</h1>
+            </center>
+            This webpage template was borrowed from <a href="https://nileshkulkarni.github.io/">Nilesh Kulkarni</a>, which originally come from some <a href="https://richzhang.github.io/colorization/">colorful folks</a>. The interactive examples are powered by <a href="https://modelviewer.dev/">model-viewer</a>.
+          </left>
+        </td>
+      </tr>
+    </table>
     <!-- Loads <model-viewer> for modern browsers: -->
-  <script type="module"
-  src="https://unpkg.com/@google/model-viewer@v0.9.0/dist/model-viewer.js">
-</script>
-
-<!-- Loads <model-viewer> for old browsers like IE11: -->
-<script nomodule
-    src="https://unpkg.com/@google/model-viewer@v0.9.0/dist/model-viewer-legacy.js">
-</script>
-</body>
+    <script type="module"
+      src="https://unpkg.com/@google/model-viewer@v0.9.0/dist/model-viewer.js"></script>
+    <!-- Loads <model-viewer> for old browsers like IE11: -->
+    <script nomodule
+      src="https://unpkg.com/@google/model-viewer@v0.9.0/dist/model-viewer-legacy.js"></script>
+  </body>
 </html>
-

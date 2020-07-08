@@ -8,15 +8,9 @@ Shengyi Qian*, Linyi Jin*, David Fouhey
 European Conference on Computer Vision (ECCV) 2020
 ```
 
-![teaser](static/teaser.png)
+![teaser](teaser.png)
 
 Please check the project site for more details.
-
-## Setup
-
-
-
-
 
 ## Citation
 
