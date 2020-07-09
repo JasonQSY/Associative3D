@@ -1,21 +1,18 @@
 # Associative3D: Volumetric Reconstruction from Sparse Views
 
-Code release for our paper
+Code release for the paper:
 
-```
-Associative3D: Volumetric Reconstruction from Sparse Views
-Shengyi Qian*, Linyi Jin*, David Fouhey
-European Conference on Computer Vision (ECCV) 2020
-```
+**Associative3D: Volumetric Reconstruction from Sparse Views**  
+[Shengyi Qian]()\*, [Linyi Jin]()*, [David Fouhey]().  
+ECCV 2020.
+
+[paper] [[project page]()]
 
 ![teaser](static/teaser.png)
 
-Please check the project site for more details.
-
 ## Setup
 
-
-
+Coming soon.
 
 
 ## Citation
