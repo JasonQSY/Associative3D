@@ -1,12 +1,12 @@
 # Associative3D: Volumetric Reconstruction from Sparse Views
 
-Code release for the paper:
+Code repository for the paper:
 
 **Associative3D: Volumetric Reconstruction from Sparse Views**  
-[Shengyi Qian]()\*, [Linyi Jin]()*, [David Fouhey]().  
+[Shengyi Qian](https://jasonqsy.github.io/)\*, [Linyi Jin](https://jinlinyi.github.io/)*, [David Fouhey](https://web.eecs.umich.edu/~fouhey/).  
 ECCV 2020.
 
-[paper] [[project page]()]
+[paper] [[project page](https://jasonqsy.github.io/Associative3D/)]
 
 ![teaser](static/teaser.png)
 
@@ -20,10 +20,10 @@ Coming soon.
 Please consider citing our paper if it is helpful:
 
 ```
-@inproceedings{qian2020associative3d, 
-    author = {Qian, Shengyi and Jin, Linyi and Fouhey, David},
+@inproceedings{Qian2020,
+    author = {Shengyi Qian and Linyi Jin and David F. Fouhey},
     title = {Associative3D: Volumetric Reconstruction from Sparse Views},
-    booktitle = {ECCV}, 
-    year = {2020} 
+    booktitle = {ECCV},
+    year = 2020
 }
 ```
