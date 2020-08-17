@@ -76,7 +76,7 @@
       </tr>
     </table>
     <br>
-    <table align=center width=300px>
+    <table align=center width=500px>
       <tr>
         <td align=center width=100px>
           <center>
@@ -86,6 +86,11 @@
         <td align=center width=100px>
           <center>
             <span style="font-size:20px">[code]</span>
+          </center>
+        </td>
+        <td align=center width=200px>
+          <center>
+            <span style="font-size:20px"><a href="https://youtu.be/_magqrpKsWI">[1-min overview]</a></span>
           </center>
         </td>
         <td align=center width=100px>
@@ -116,7 +121,7 @@
       <td width=600px>
         <center>
           <span style="font-size:14px"><i>Given two views from unknown cameras, we aim 
-          to extract a coherent full 3D space in terms of 
+          to extract a coherent 3D space in terms of 
           a set of volumetric objects placed in the scene. 
           We represent the scene with a factored representation that splits the scene
           into per-object voxel grids with a scale and pose.</i>
@@ -125,18 +130,15 @@
       </tr>
     </table>
     <br>
-    This paper studies the problem of 3D volumetric reconstruction
-    from two views of a scene with an unknown camera. While seemingly
-    easy for humans, this problem poses many challenges for computers
-    since it requires simultaneously reconstructing objects in the two
-    views while also figuring out their relationship. We propose a new approach
-    that estimates reconstructions, distributions over the
-    camera/object and camera/camera transformations, as well as an
-    inter-view object affinity matrix. This information is then jointly reasoned
-    over to produce the most likely explanation of the scene. We train and
-    test our approach on SUNCG, a dataset of indoor scenes, and rigorously
-    evaluate the merits of our joint reasoning approach. 
-    Our experiments show that it is able to recover reasonable scenes from sparse views, while the problem is still challenging.
+    This paper studies the problem of 3D volumetric reconstruction from two views of a scene with an unknown camera. While seemingly easy for humans, this problem poses many challenges for computers
+    since it requires simultaneously reconstructing objects in the two views
+    while also figuring out their relationship. We propose a new approach
+    that estimates reconstructions, distributions over the camera/object and
+    camera/camera transformations, as well as an inter-view object affinity
+    matrix. This information is then jointly reasoned over to produce the
+    most likely explanation of the scene. We train and test our approach on
+    a dataset of indoor scenes, and rigorously evaluate the merits of our joint
+    reasoning approach. Our experiments show that it is able to recover reasonable scenes from sparse views, while the problem is still challenging.
     <br><br>
     <hr>
     <!-- <table align=center width=550px> -->
