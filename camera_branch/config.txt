@@ -1,0 +1,10 @@
+{
+  "img_resize": "224x224",
+  "img_mean": "./cached_dir/img_mean_224x224.npy",
+  "base_network": "resnet50",
+  "train_test_phase": "test",
+  "model_weight": "./cached_dir/model_95000.pth",
+  "kmeans_trans_path": "./cached_dir/kmeans_trans_60.pkl",
+  "kmeans_rots_path": "./cached_dir/kmeans_rots_30.pkl",
+  "loss_fn": "C"
+}
